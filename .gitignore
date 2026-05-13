@@ -2,3 +2,8 @@
 .venv/
 venv/
 env/
+
+data/
+Logs_Checkpoints/
+__pycache__/
+inference_results/
