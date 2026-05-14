@@ -1,6 +1,8 @@
 from torch.utils.data import DataLoader
 import torchvision.transforms as TF
 import torchvision.datasets as datasets
+import kagglehub
+import os
 
 def to_device(data, device):
     """Move tensor(s) to chosen device"""
@@ -28,10 +30,11 @@ def scale_image(t):
     return (t * 2) - 1
 
 def get_dataset(dataset_name='MNIST'):
+    img_size = 32 if dataset_name == "MNIST" else 64
     transforms = TF.Compose(
         [
             TF.ToTensor(),
-            TF.Resize((32, 32), 
+            TF.Resize((img_size, img_size), 
                       interpolation=TF.InterpolationMode.BICUBIC, 
                       antialias=True),
 #             TF.RandomHorizontalFlip(),
@@ -46,7 +49,8 @@ def get_dataset(dataset_name='MNIST'):
     elif dataset_name == "Cifar-100":
         dataset = datasets.CIFAR100(root="data", train=True, download=True, transform=transforms)
     elif dataset_name == "Flowers":
-        dataset = datasets.ImageFolder(root="/kaggle/input/flowers-recognition/flowers", transform=transforms)
+        base_path = kagglehub.dataset_download("alxmamaev/flowers-recognition", output_dir="data/Flowers")
+        dataset = datasets.ImageFolder(root=os.path.join(base_path, "flowers"), transform=transforms)
     
     return dataset
 
